@@ -1,5 +1,5 @@
 public class Variables{
-    String name = "";
+    String name;
 
     public Variables(String name){
         this.name = name;
