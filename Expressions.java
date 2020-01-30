@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class Expressions{
     String expression;
     Object left;
@@ -31,15 +33,21 @@ public class Expressions{
 
         return " ";
     }
-    public void setLeft(String left){
+    public void setLeft(Object left){
         this.left = left;
     }
-    public void setRight(String right){
+    public void setRight(Object right){
         this.right = right;
     }
     public String toString(){
-        Object temp = "hi ";
-        System.out.println(temp);
-        return ("(" + this.left.toString() + " " + this.right.toString() + ")");
+        // System.out.println("hello");
+        // if(this.left instanceof List){
+        // System.out.println(this.left);
+        // }
+        // if(this.right instanceof List){
+        // System.out.println(this.right);
+        // }
+        return ("(" + left + " " + right + ")");
+        //return ("(" + this.left + " " + this.right + ")");
     }
 }
