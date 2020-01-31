@@ -9,7 +9,7 @@ public class Lambda {
     public static void main(String[] args) throws IOException {
         String carrot = ">";
         String name = "";
-        ArrayList<Expressions> ExpressionsArray =null;
+        ArrayList<Expressions> applicationArray =null;
         while (!name.equals("exit")) {
             // Enter data using BufferReader
             System.out.print(carrot);
@@ -47,88 +47,60 @@ public class Lambda {
                 sbf.append(namearray);
                 name = sbf.toString();
 
-                // int numberofvariables = 0;
-                // if (temp[0] != ' ') {
-                // numberofvariables++;
-                // }
-                // for (int i = 0; i < temp.length - 1; i++) {
-                // if (temp[i] == ' ' && temp[i + 1] != ' ') {
-                // numberofvariables++;
-                // }
-                // }
-                if (namearray[0] == '(') {
-                    // split the fucntion thing in lambda
-                   ExpressionsArray = new ArrayList<Expressions>();
-                    ArrayList<Object> inputArray = new ArrayList<Object>();
-                    for (int i = 0; i < namearray.length; i++) {
-                        inputArray.add(namearray[i]);
-                    }
-                    int lastParenIndex = 0;
-                    while (inputArray.size() != 1) {
-                        for (int i = 0; i < inputArray.size(); i++) {
-                            if (inputArray.get(i).equals('(')) {
-                                lastParenIndex = i;
-                            }
-
-                            if (inputArray.get(i).equals(')')) {
-                                int spaceIndex = 0;
-                                for (int j = lastParenIndex + 1; j < i; j++) {
-                                    if (inputArray.get(j).equals(' ')) {
-                                        spaceIndex = j;
-                                    }
-                                }
-                                // ArrayList<Object> leftArray =
-                                // inputArray.subList(lastParenIndex+1,spaceIndex);
-                                // ArrayList<Object> rightArray = inputArray.subList(spaceIndex+1,i);
-                                ArrayList<Object> leftArray = new ArrayList<>();
-                                ArrayList<Object> rightArray = new ArrayList<>();
-                                for (int j = lastParenIndex + 1; j < spaceIndex; j++) {
-                                    leftArray.add(inputArray.get(j));
-                                }
-                                for (int j = spaceIndex + 1; j < i; j++) {
-                                    rightArray.add(inputArray.get(j));
-                                }
-
-                                // char[] leftArray = new char[spaceIndex-1];
-                                // char[] rightArray = new char[namearray.length - spaceIndex-1];
-                                // System.arraycopy(namearray, 1, leftArray, 0, spaceIndex-1);
-                                // System.arraycopy(namearray, spaceIndex, rightArray, 0, namearray.length -
-                                // spaceIndex-1);
-                                Expressions expression = new Expressions(" ");
-                                expression.setLeft(leftArray);
-                                expression.setRight(rightArray);
-                                ExpressionsArray.add(expression);
-
-                                System.out.println(leftArray);
-                                System.out.println(rightArray);
-                                System.out.println(i);
-                                for (int j = lastParenIndex; j < i + 1; j++) {
-                                    inputArray.remove(lastParenIndex);
-                                }
-                                inputArray.add(lastParenIndex, expression);
-                                System.out.println(inputArray);
-                            }
-
-                        }
-                    }
-
-                    // String[] variableNameArray = name.split(" ");
-                    // ArrayList<Variables> varaiableArray = new ArrayList<Variables>();
-                    // for (int i = 0; i < variableNameArray.length; i++) {
-                    // varaiableArray.add(new Variables(variableNameArray[i]));
-                    // }
+                int numberofvariables = 0;
+                if (temp[0] != ' ') {
+                numberofvariables++;
                 }
+                for (int i = 0; i < temp.length - 1; i++) {
+                if (temp[i] == ' ' && temp[i + 1] != ' ') {
+                numberofvariables++;
+                }
+                }
+                // ArrayList<Applications> appArray = new ArrayList<Applications>();
+                // int letterindex = 0;
+                // while(letterindex !=-1){
+                //     letterindex = -1;
+
+                //     Applications app = new Applications();
+                //     for (int i = 0; i < temp.length; i++) {
+                //         if(temp[i]!= '(' && temp[i] != ')' && letterindex == -1){
+                //             letterindex = i;
+                //             Variables var = new Variables(Character.toString(temp[i])); //change here if vars are larger than one 
+                //             app.setLeft(var);
+                //             appArray.add(app);
+                //         }
+                //     }
+                //     if(letterindex != -1){
+                //         int parenCounter = 1;
+                //         int parenIndex = letterindex;
+                //         int i = letterindex;
+                //         while(i < temp.length && parenCounter != 0){
+                //             if(temp[i] == '(' ){
+                //                 parenCounter ++;
+                //             }
+                //             if(temp[i] == ')'){
+                //                 parenCounter--;
+                //             }
+                //             if(parenCounter ==0){
+                //                 parenIndex = i;
+                //             }
+                //             i++;
+                //         }
+                //         ArrayList<Object> rightArray = new ArrayList<>();
+                //         for (int j = letterindex + 1; j < parenIndex; j++) {
+                //             rightArray.add(temp[j]);
+                //         }
+                //         appArray.get(appArray.size()-1).right =rightArray; 
+
+                //     }
+                // }
             }
-            Variables var = new Variables(name);
+            //Variables var = new Variables(name);
 
             if (!name.equals("exit")) {
-                System.out.println(var.toString());
+                //System.out.println(var.toString());
                 // Expressions expression = new Expressions(var.toString());
                 // System.out.println(expression.toString());
-                if(!ExpressionsArray.equals(null)){
-                    System.out.println("rer");
-                    System.out.println(ExpressionsArray.get(ExpressionsArray.size()-1));
-                }
             } else {
                 System.out.println("Goodbye!");
             }
