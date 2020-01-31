@@ -36,7 +36,7 @@
 
     //     return " ";
     // }
-    public void setLeft(Object left){
+    public void setLeht(Object left){
         this.left = left;
     }
     public void setRight(Object right){
