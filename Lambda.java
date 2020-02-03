@@ -57,7 +57,8 @@ public class Lambda {
                     }
                 }
                 appArray = new ArrayList<Applications>();
-
+                Applications temp2 = new Applications();
+                appArray.add(temp2);
                 ArrayList<Object> enterString = new ArrayList<>();
                 for (int i = 0; i < temp.length; i++) {
                     enterString.add(temp[i]);
@@ -219,19 +220,24 @@ public class Lambda {
                 int parenCount = 0;
                 boolean foundParen = false;
                 for (int i = 1; i < array.size(); i++) {
-                    System.out.println("in2");
+                    System.out.println("in2: "+array.get(i));
 
-                    if (array.get(0).equals('(')) {
+                    if (array.get(i).equals('(')) {
                         parenCount++;
                     }
-                    if (array.get(0).equals(')')) { 
+                    if (array.get(i).equals(')')) { 
                         parenCount--;
                     }
                     if (parenCount == 0 && foundParen == false) {
                         System.out.println("in3");
 
                         foundParen = true;
-                        if (appArray.get(appArray.size() - 1).left == null) {
+                        if(appArray.size() == 0){
+                            Applications temp = new Applications();
+                            appArray.add(temp);
+                        }
+
+                        if (appArray.get(appArray.size()-1).left == null) {
                             appArray.get(appArray.size()-1).left = Tree((ArrayList<Object>)array.subList(j+1, i -j));
                             array.set(j,appArray.get(appArray.size()).left);
                             for (int k = j+1; k < i-j; k++) {
