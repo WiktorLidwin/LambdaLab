@@ -2,8 +2,8 @@
     public class Applications{
 
     String application;
-    Object left;
-    Object right;
+    Object left = null;
+    Object right = null;
     public Applications(String application ){
         this.application = application.trim();
         System.out.println("here");
