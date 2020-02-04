@@ -59,11 +59,12 @@ public class Lambda {
                 appArray = new ArrayList<Applications>();
                 Applications temp2 = new Applications();
                 appArray.add(temp2);
-                ArrayList<Object> enterString = new ArrayList<>();
+                List<Object> enterString = new ArrayList<>();
                 for (int i = 0; i < temp.length; i++) {
                     enterString.add(temp[i]);
                 }
-                 System.out.println(Tree(enterString));
+
+                System.out.println(treeBuilder(enterString));
 
                 // ArrayList<Applications> appArray = new ArrayList<Applications>();
                 // int letterindex = 0;
@@ -120,157 +121,103 @@ public class Lambda {
 
     public static ArrayList<Applications> appArray = new ArrayList<Applications>();
 
-    // public static Applications treeBuilder(ArrayList<Object> enterString) {
-    // System.out.println("size: "+enterString.size());
-    // for (int i = 0; i < enterString.size(); i++) {
-
-    // if (enterString.get(i).equals('(')) {
-    // System.out.println("in");
-    // int parenCount = 0;
-    // for (int j = i; j < enterString.size(); j++) {
-    // System.out.println("j: "+ j+ " "+ enterString.get(j));
-    // if(enterString.get(j).equals('(')){
-    // parenCount++;
-    // }
-    // if(enterString.get(j).equals(')')){
-    // parenCount--;
-    // }
-    // if(parenCount == 0){
-    // //char[] temp = new char[j-i-1];
-    // //System.arraycopy(c, i+1, temp, 0, j-i-1);
-    // List<Object> temp = enterString.subList(i+1, j-1-i);
-    // System.out.println("HELOE");
-    // System.out.println(i+ " "+(j) );
-    // System.out.println(enterString);
-    // // for (int k = 0; k < c.length; k++) {
-    // // if(k >= i && k<=j){
-    // // c[k] = ' ';
-    // // }
-    // // }
-    // System.out.println();
-    // System.out.println(temp);
-    // if(appArray.size() == 0){
-    // Applications temp3 = new Applications();
-    // appArray.add(temp3);
-    // }
-    // if(appArray.get(appArray.size()-1).left == null){
-    // System.out.println("left");
-    // Applications temp2 = new Applications();
-    // temp2.left = appArray.get(appArray.size()-1);
-    // Applications temp3 = new Applications();
-    // appArray.add(temp3);
-    // temp2.left = treeBuilder((ArrayList<Object>)temp);
-    // appArray.remove(appArray.size()-1);
-    // appArray.add(temp2);
-    // }
-    // else if(appArray.get(appArray.size()-1).right != null){
-    // System.out.println("full");
-    // Applications temp2 = new Applications();
-    // temp2.left = appArray.get(appArray.size()-1);
-    // Applications temp3 = new Applications();
-    // appArray.add(temp3);
-    // temp2.right = treeBuilder((ArrayList<Object>)temp);
-    // appArray.remove(appArray.size()-1);
-    // appArray.add(temp2);
-    // }
-    // else{
-    // System.out.println("right");
-    // Applications temp2 = appArray.get(appArray.size()-1);
-    // Applications temp3 = new Applications();
-    // appArray.add(temp3);
-    // temp2.right = treeBuilder((ArrayList<Object>)temp);
-    // appArray.remove(appArray.size()-1);
-    // }
-    // }
-
-    // }
-    // }
-    // else if(!enterString.get(i).equals(' ')){
-    // Variables temp = new Variables(Character.toString(enterString.get(i)));//
-    // TODO here to make the name bigger
-    // if(appArray.size() == 0){
-    // Applications temp2 = new Applications();
-    // temp2.left =temp;
-    // appArray.add(temp2);
-    // }
-    // else if(appArray.get(appArray.size()-1).left == null){
-    // Applications temp2 = appArray.get(appArray.size()-1);
-    // temp2.left =temp;
-    // }
-    // else if(appArray.get(appArray.size()-1).right != null){
-    // Applications temp2 = new Applications();
-    // temp2.left = appArray.get(appArray.size()-1);
-    // temp2.right = temp;
-    // appArray.add(temp2);
-    // }
-    // else{
-    // Applications temp2 = appArray.get(appArray.size()-1);
-    // temp2.right =temp;
-    // }
-    // System.out.println(appArray);
-    // }
-    // }
-    // return appArray.get(appArray.size()-1);
-    // }
-
-    public static Applications Tree(ArrayList<Object> array) {
-        for (int j = 0; j < array.size(); j++) {
-            if (array.get(j).equals('(')) {
-                System.out.println("in1");
+    public static Applications treeBuilder(List<Object> enterString) {
+        System.out.println("size: " + enterString.size());
+        for (int i = 0; i < enterString.size(); i++) {
+            System.out.println("i: "+i+" geti: "+ enterString.get(i));
+            if (enterString.get(i).equals('(')) {
+                System.out.println("in");
                 int parenCount = 0;
                 boolean foundParen = false;
-                for (int i = 1; i < array.size(); i++) {
-                    System.out.println("in2: "+array.get(i));
-
-                    if (array.get(i).equals('(')) {
+                for (int j = i; j < enterString.size(); j++) {
+                    System.out.println("j: " + j + " " + enterString.get(j));
+                    if (enterString.get(j).equals('(')) {
                         parenCount++;
                     }
-                    if (array.get(i).equals(')')) { 
+                    if (enterString.get(j).equals(')')) {
                         parenCount--;
                     }
-                    if (parenCount == 0 && foundParen == false) {
-                        System.out.println("in3");
-
+                    if (parenCount == 0 && foundParen ==false){
                         foundParen = true;
-                        if(appArray.size() == 0){
-                            Applications temp = new Applications();
-                            appArray.add(temp);
+                        // char[] temp = new char[j-i-1];
+                        // System.arraycopy(c, i+1, temp, 0, j-i-1);
+                        System.out.println("i: "+i+" j:"+j);
+                        List<Object> temp = enterString.subList(i + 1, j);
+                        System.out.println("HELOE");
+                        System.out.println(i + " " + (j));
+                        System.out.println(enterString);
+                        // for (int k = 0; k < c.length; k++) {
+                        // if(k >= i && k<=j){
+                        // c[k] = ' ';
+                        // }
+                        // }
+                        System.out.println();
+                        System.out.println(temp);
+                        if (appArray.size() == 0) {
+                            Applications temp3 = new Applications();
+                            appArray.add(temp3);
                         }
-
-                        if (appArray.get(appArray.size()-1).left == null) {
-                            appArray.get(appArray.size()-1).left = Tree((ArrayList<Object>)array.subList(j+1, i -j));
-                            array.set(j,appArray.get(appArray.size()).left);
-                            for (int k = j+1; k < i-j; k++) {
-                                array.remove(k);
-                            }
-                            System.out.println(array);
-                        }
-                        if (appArray.get(appArray.size() - 1).right == null) {
-                            appArray.get(appArray.size()-1).right = Tree((ArrayList<Object>)array.subList(j+1, i -j));
-                            array.set(j,appArray.get(appArray.size()).right);
-                            for (int k = j+1; k < i-j; k++) {
-                                array.remove(k);
-                            }
-                            System.out.println(array);
+                        if (appArray.get(appArray.size() - 1).left == null) {
+                            System.out.println("left");
+                            Applications temp2 = new Applications();
+                            temp2.left = appArray.get(appArray.size() - 1);
+                            Applications temp3 = new Applications();
+                            appArray.add(temp3);
+                            temp2.left = treeBuilder( temp);
+                            appArray.remove(appArray.size() - 1);
+                            appArray.add(temp2);
+                            System.out.println("appArray: "+appArray);
+                        } else if (appArray.get(appArray.size() - 1).right != null) {
+                            System.out.println("full");
+                            Applications temp2 = new Applications();
+                            temp2.left = appArray.get(appArray.size() - 1);
+                            Applications temp3 = new Applications();
+                            appArray.add(temp3);
+                            System.out.println("temp: "+temp);
+                            temp2.right = treeBuilder(temp);
+                            appArray.remove(appArray.size() - 1);
+                            appArray.add(temp2);
+                            
+                            System.out.println("appArray: "+appArray);
                         } else {
-                            Applications temp = new Applications();
-                            appArray.add(temp);
-                            temp.left = appArray.get(appArray.size()-1);
-                            appArray.get(appArray.size()-1).right = Tree((ArrayList<Object>)array.subList(j+1, i -j));
-                            array.set(j,appArray.get(appArray.size()).right);
-                            for (int k = j+1; k < i-j; k++) {
-                                array.remove(k);
-                            }
-                            System.out.println(array);
+                            System.out.println("right");
+                            Applications temp2 = appArray.get(appArray.size() - 1);
+                            Applications temp3 = new Applications();
+                            appArray.add(temp3);
+                            temp2.right = treeBuilder( temp);
+                            appArray.remove(appArray.size() - 1);
+                            
+                            System.out.println("appArray: "+appArray);
                         }
+                        System.out.println("change i J: "+j);
+                        System.out.println(enterString.get(j));
+                        i = j;
                     }
-                }
 
-            } else if (!array.get(j).equals(' ')) {
-                System.out.println("Hi:" +array.get(j));
+                }
+            } else if (!enterString.get(i).equals(' ')) {
+                System.out.println("char i:"+i);
+                Variables temp = new Variables(Character.toString((char)enterString.get(i)));//
+                // TODO here to make the name bigger
+                if (appArray.size() == 0) {
+                    Applications temp2 = new Applications();
+                    temp2.left = temp;
+                    appArray.add(temp2);
+                } else if (appArray.get(appArray.size() - 1).left == null) {
+                    Applications temp2 = appArray.get(appArray.size() - 1);
+                    temp2.left = temp;
+                } else if (appArray.get(appArray.size() - 1).right != null) {
+                    Applications temp2 = new Applications();
+                    temp2.left = appArray.get(appArray.size() - 1);
+                    temp2.right = temp;
+                    appArray.add(temp2);
+                } else {
+                    Applications temp2 = appArray.get(appArray.size() - 1);
+                    temp2.right = temp;
+                }
+                System.out.println(appArray);
             }
         }
-        return null;
-
+        return appArray.get(appArray.size() - 1);
     }
 }

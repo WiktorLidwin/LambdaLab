@@ -50,6 +50,15 @@
         // if(this.right instanceof List){
         // System.out.println(this.right);
         // }
+        if(right == null && left == null){
+            return "null";
+        }
+        if(right == null){
+            return ("(" + left  + ")");
+        }
+        if(left == null){
+            return ("(" + right + ")");
+        }
         return ("(" + left + " " + right + ")");
         //return ("(" + this.left + " " + this.right + ")");
     }
