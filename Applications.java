@@ -51,13 +51,13 @@
         // System.out.println(this.right);
         // }
         if(right == null && left == null){
-            return "null";
+            return null;
         }
         if(right == null){
-            return ("(" + left  + ")");
+            return ( left.toString()  );
         }
         if(left == null){
-            return ("(" + right + ")");
+            return (right.toString() );
         }
         return ("(" + left + " " + right + ")");
         //return ("(" + this.left + " " + this.right + ")");
