@@ -59,7 +59,13 @@
         if(left == null){
             return (right.toString() );
         }
-        return ("(" + left + " " + right + ")");
+        try{
+        return ("(" + left.toString() + " " + right.toString() + ")");
+        }
+        catch(Error ex){
+            //System.out.println("error");
+            return null;
+        }
         //return ("(" + this.left + " " + this.right + ")");
     }
 }
