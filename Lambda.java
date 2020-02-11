@@ -47,26 +47,33 @@ public class Lambda {
                 sbf.append(namearray);
                 name = sbf.toString();
 
-                int numberofvariables = 0;
-                if (temp[0] != ' ') {
-                    numberofvariables++;
-                }
-                for (int i = 0; i < temp.length - 1; i++) {
-                    if (temp[i] == ' ' && temp[i + 1] != ' ') {
-                        numberofvariables++;
-                    }
-                }
-
                 String[] temp2 = name.split(" ");
                 List<Object> varnames = new ArrayList<>();
                 for (int i = 0; i < temp2.length; i++) {
                     if (!temp2[i].equals("")) {
-                        varnames.add(temp2[i]);
+                        int z = 0;
+                        while(temp2[i].toCharArray()[z]== '('){
+                            z++;
+                        }
+                        for (int j = 0; j < z; j++) {
+                            varnames.add("(");
+                        }
+                        int y = temp2[i].toCharArray().length -1;
+                        while(temp2[i].toCharArray()[y]== ')'){
+                            y--;
+                        }
+                        
+                        System.out.println("z: "+z+"  y: "+y);
+                        varnames.add(temp2[i].substring(z,y+1));
+                        for (int j = 0; j < temp2[i].toCharArray().length -1 - y; j++) {
+                            varnames.add(")");
+                        }
                     }
                 }
-                System.out.println(varnames);
+                System.out.println("varnames(init): "+varnames);
                 Applications temp3 = new Applications();
                 System.out.println(TreeBuilder(temp3, varnames));
+            
                 // appArray = new ArrayList<Applications>();
                 // Applications temp2 = new Applications();
                 // appArray.add(temp2);
@@ -234,27 +241,102 @@ public class Lambda {
             System.out.println("return app: " + app);
             return app;
         } else {
-            if (app.left == null && app.right == null) {
-                app.left = varnames.get(0);
-                System.out.println("removed2: "+ varnames.remove(0));
+            if(app == null){
+                Applications temp = new Applications();
+                return TreeBuilder(temp, varnames);
+            }
+            else if (app.left == null && app.right == null) {
+                // app.left = varnames.get(0);
+                if(!varnames.get(0).equals("(")){
+                    app.left = varnames.get(0);
+                    System.out.println("removed2: " + varnames.remove(0));
+                }
+                else{
+                    Applications temp = new Applications();
+                    List<Object> temp2 = stuffinParens(varnames);
+                    System.out.println("temp2: "+ temp2);
+                    int amount_to_remove = (int)temp2.get(temp2.size()-1);
+                    temp2.remove(temp2.size()-1);
+                    System.out.println("before1: "+ varnames);
+                    for (int i = 0; i < amount_to_remove+1; i++) {    
+                        varnames.remove(0);
+                    }
+                    System.out.println("after: "+ varnames);
+                    app.left = TreeBuilder(null,temp2);
+                }
+                //System.out.println("removed2: "+ varnames.remove(0));
                 return TreeBuilder(app, varnames);
             }
-
+            else if(app.left != null && app.right != null){
+                Applications temp = new Applications();
+                temp.left = app;
+                return TreeBuilder(temp, varnames);
+            }
             else if (app.left == null) {
                 // Applications temp = new Applications();
-                app.left = varnames.get(0);
-                System.out.println("removed1: " + varnames.remove(0));
+                // app.left = varnames.get(0);
+                if(!varnames.get(0).equals("(")){
+                    app.left = varnames.get(0);
+                    System.out.println("removed2: " + varnames.remove(0));
+                }
+                else{
+                    Applications temp = new Applications();
+                    List<Object> temp2 = stuffinParens(varnames);
+                    int amount_to_remove = (int)temp2.get(temp2.size()-1);
+                    temp2.remove(temp2.size()-1);
+                    System.out.println("before2: "+ varnames);
+                    for (int i = 0; i < amount_to_remove+1; i++) {    
+                        varnames.remove(0);
+                    }
+                    System.out.println("after: "+ varnames);
+                    app.left = TreeBuilder(null,temp2);
+                }
+                //System.out.println("removed1: " + varnames.remove(0));
                 return TreeBuilder(app, varnames);
 
             } else if (app.right == null) {
-                app.right = varnames.get(0);
-                Applications temp = new Applications();
-                temp.left = app;
-                System.out.println("removed2: " + varnames.remove(0));
-                return TreeBuilder(temp, varnames);
+                if(!varnames.get(0).equals("(")){
+                    app.right = varnames.get(0);
+                    System.out.println("removed2: " + varnames.remove(0));
+                }
+                else{
+                    Applications temp = new Applications();
+                    List<Object> temp2 = stuffinParens(varnames);
+                    int amount_to_remove = (int)temp2.get(temp2.size()-1);
+                    temp2.remove(temp2.size()-1);
+                    System.out.println("before3: "+ varnames);
+                    for (int i = 0; i < amount_to_remove+1; i++) {    
+                        varnames.remove(0);
+                    }
+                    
+                    System.out.println("after: "+ varnames);
+                    app.right = TreeBuilder(null,temp2);
+                }
+                return TreeBuilder(app, varnames);
             }
-
         }
         return null;
+    }
+    public static List<Object> stuffinParens(List<Object> varnames){
+        int parenCounter = 1;
+        int closedParenIndex = -1;
+        for (int i = 1; i < varnames.size(); i++) {
+           if(varnames.get(i).equals("(")){
+               parenCounter ++;
+           } 
+           if(varnames.get(i).equals(")")){
+            parenCounter --;
+        } 
+            if(parenCounter == 0 && closedParenIndex == -1){
+                closedParenIndex = i;
+            }
+        }
+        List<Object> temp = new ArrayList<>();
+        for (int i = 1; i < closedParenIndex; i++) {
+            temp.add(varnames.get(i));
+        }
+        temp.add(closedParenIndex);
+        System.out.println("new temp(paren stuff): " +temp);
+        return temp;
     }
 }
