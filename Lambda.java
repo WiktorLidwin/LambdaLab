@@ -49,30 +49,105 @@ public class Lambda {
 
                 String[] temp2 = name.split(" ");
                 List<Object> varnames = new ArrayList<>();
+                ArrayList<Integer> backslashindex = new ArrayList<>();
+                ArrayList<Integer> openParenindex = new ArrayList<>();
+                ArrayList<Integer> closedParenindex = new ArrayList<>();
+                ArrayList<Integer> dotindex = new ArrayList<>();
+                ArrayList<Object> stringArray = new ArrayList<>();
+                
                 for (int i = 0; i < temp2.length; i++) {
                     if (!temp2[i].equals("")) {
-                        int z = 0;
-                        while(temp2[i].toCharArray()[z]== '('){
-                            z++;
-                        }
-                        for (int j = 0; j < z; j++) {
-                            varnames.add("(");
-                        }
-                        int y = temp2[i].toCharArray().length -1;
-                        while(temp2[i].toCharArray()[y]== ')'){
-                            y--;
-                        }
-                        
-                        System.out.println("z: "+z+"  y: "+y);
-                        varnames.add(temp2[i].substring(z,y+1));
-                        for (int j = 0; j < temp2[i].toCharArray().length -1 - y; j++) {
-                            varnames.add(")");
+                        for (int j = 0; j < temp2[i].toCharArray().length; j++) {
+                            
+                            if(temp2[i].toCharArray()[j] == '\\'){
+                                if(stringArray.size() != 0){
+                                    String currentName = "";
+                                    for (int j2 = 0; j2 < stringArray.size(); j2++) {
+                                        currentName+= stringArray.get(j2);
+                                    }
+                                    varnames.add(currentName);
+                                    stringArray = new ArrayList<>();
+                                }
+                                varnames.add('\\');
+                                backslashindex.add(j);
+
+                            }
+                            else if(temp2[i].toCharArray()[j] == '('){
+                                if(stringArray.size() != 0){
+                                    String currentName = "";
+                                    for (int j2 = 0; j2 < stringArray.size(); j2++) {
+                                        currentName+= stringArray.get(j2);
+                                    }
+                                    varnames.add(currentName);
+                                    stringArray = new ArrayList<>();
+                                }
+                                System.out.println("I");
+                                varnames.add('(');
+                                openParenindex.add(i);
+                                System.out.println(openParenindex.size());
+                            }
+                            else if(temp2[i].toCharArray()[j] == ')'){
+                                if(stringArray.size() != 0){
+                                    String currentName = "";
+                                    for (int j2 = 0; j2 < stringArray.size(); j2++) {
+                                        currentName+= stringArray.get(j2);
+                                    }
+                                    varnames.add(currentName);
+                                    stringArray = new ArrayList<>();
+                                }
+                                System.out.println(openParenindex.size());
+                                System.out.println(openParenindex.get(openParenindex.size()-1)+1);
+                                System.out.println(j);
+                                varnames.add(temp2[i].substring(openParenindex.get(openParenindex.size()-1)+1,j));
+                                varnames.add(')');
+                                //closedParenindex.add(j);
+                            }
+                            else if(temp2[i].toCharArray()[j] == '.'){
+                                if(stringArray.size() != 0){
+                                    String currentName = "";
+                                    for (int j2 = 0; j2 < stringArray.size(); j2++) {
+                                        currentName+= stringArray.get(j2);
+                                    }
+                                    varnames.add(currentName);
+                                    stringArray = new ArrayList<>();
+                                }
+                                //varnames.add(temp2[i].substring(backslashindex.get(backslashindex.size()-1)+1,j));
+                                varnames.add('.');
+
+                                //dotindex.add(j);
+                            }
+                            else if((temp2[i].toCharArray()[j] != ' ')){
+                                //System.out.println(temp2[i].toCharArray()[j]);
+                                stringArray.add(temp2[i].toCharArray()[j]);
+                            }
+                            else{
+                                if(stringArray.size() != 0){
+                                    //System.out.println("adding");
+                                    String currentName = "";
+                                    for (int j2 = 0; j2 < stringArray.size(); j2++) {
+                                        currentName+= stringArray.get(j2);
+                                    }
+                                    varnames.add(currentName);
+                                    stringArray = new ArrayList<>();
+                                }
+                            }
+                            if(temp2[i].toCharArray().length-1 == j){
+                                //System.out.println("end");
+                                if(stringArray.size() != 0){
+                                    String currentName = "";
+                                    for (int j2 = 0; j2 < stringArray.size(); j2++) {
+                                        currentName+= stringArray.get(j2);
+                                    }
+                                    varnames.add(currentName);
+                                    stringArray = new ArrayList<>();
+                                }
+                            }//\ab.\bc.\cd
                         }
                     }
                 }
                 System.out.println("varnames(init): "+varnames);
                 Applications temp3 = new Applications();
-                System.out.println(TreeBuilder(temp3, varnames));
+               // System.out.println(TreeBuilder(temp3, varnames));
             
                 // appArray = new ArrayList<Applications>();
                 // Applications temp2 = new Applications();
