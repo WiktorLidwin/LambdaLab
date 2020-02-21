@@ -27,7 +27,7 @@ public class Lambda {
                 }
                 boolean charfound = false;
                 int charpos = commentsplit;
-                if (namearray[commentsplit - 1] == ' ') { // for removing spaces before the comment a____;comment
+                if (namearray[commentsplit - 1] == ' ') { // for removing spaces before the comment a____;comment //
                                                           // removes the _____(<-spaces)
                     for (int i = commentsplit - 1; i >= 0; i--) {
                         if (charfound == false && namearray[i] == ' ') {
@@ -40,378 +40,149 @@ public class Lambda {
                 }
                 char[] temp = new char[charpos];
                 System.arraycopy(namearray, 0, temp, 0, charpos);
-
                 namearray = temp;
-                // System.out.println(Arrays.toString(temp));
                 StringBuilder sbf = new StringBuilder("");
                 sbf.append(namearray);
                 name = sbf.toString();
-
-                String[] temp2 = name.split(" ");
-                List<Object> varnames = new ArrayList<>();
-                ArrayList<Integer> backslashindex = new ArrayList<>();
-                ArrayList<Integer> openParenindex = new ArrayList<>();
-                ArrayList<Integer> closedParenindex = new ArrayList<>();
-                ArrayList<Integer> dotindex = new ArrayList<>();
-                ArrayList<Object> stringArray = new ArrayList<>();
-                
-                for (int i = 0; i < temp2.length; i++) {
-                    if (!temp2[i].equals("")) {
-                        for (int j = 0; j < temp2[i].toCharArray().length; j++) {
-                            
-                            if(temp2[i].toCharArray()[j] == '\\'){
-                                if(stringArray.size() != 0){
-                                    String currentName = "";
-                                    for (int j2 = 0; j2 < stringArray.size(); j2++) {
-                                        currentName+= stringArray.get(j2);
-                                    }
-                                    varnames.add(currentName);
-                                    stringArray = new ArrayList<>();
-                                }
-                                varnames.add('\\');
-                                backslashindex.add(j);
-
-                            }
-                            else if(temp2[i].toCharArray()[j] == '('){
-                                if(stringArray.size() != 0){
-                                    String currentName = "";
-                                    for (int j2 = 0; j2 < stringArray.size(); j2++) {
-                                        currentName+= stringArray.get(j2);
-                                    }
-                                    varnames.add(currentName);
-                                    stringArray = new ArrayList<>();
-                                }
-                                System.out.println("I");
-                                varnames.add('(');
-                                openParenindex.add(i);
-                                System.out.println(openParenindex.size());
-                            }
-                            else if(temp2[i].toCharArray()[j] == ')'){
-                                if(stringArray.size() != 0){
-                                    String currentName = "";
-                                    for (int j2 = 0; j2 < stringArray.size(); j2++) {
-                                        currentName+= stringArray.get(j2);
-                                    }
-                                    varnames.add(currentName);
-                                    stringArray = new ArrayList<>();
-                                }
-                                System.out.println(openParenindex.size());
-                                System.out.println(openParenindex.get(openParenindex.size()-1)+1);
-                                System.out.println(j);
-                                varnames.add(temp2[i].substring(openParenindex.get(openParenindex.size()-1)+1,j));
-                                varnames.add(')');
-                                //closedParenindex.add(j);
-                            }
-                            else if(temp2[i].toCharArray()[j] == '.'){
-                                if(stringArray.size() != 0){
-                                    String currentName = "";
-                                    for (int j2 = 0; j2 < stringArray.size(); j2++) {
-                                        currentName+= stringArray.get(j2);
-                                    }
-                                    varnames.add(currentName);
-                                    stringArray = new ArrayList<>();
-                                }
-                                //varnames.add(temp2[i].substring(backslashindex.get(backslashindex.size()-1)+1,j));
-                                varnames.add('.');
-
-                                //dotindex.add(j);
-                            }
-                            else if((temp2[i].toCharArray()[j] != ' ')){
-                                //System.out.println(temp2[i].toCharArray()[j]);
-                                stringArray.add(temp2[i].toCharArray()[j]);
-                            }
-                            else{
-                                if(stringArray.size() != 0){
-                                    //System.out.println("adding");
-                                    String currentName = "";
-                                    for (int j2 = 0; j2 < stringArray.size(); j2++) {
-                                        currentName+= stringArray.get(j2);
-                                    }
-                                    varnames.add(currentName);
-                                    stringArray = new ArrayList<>();
-                                }
-                            }
-                            if(temp2[i].toCharArray().length-1 == j){
-                                //System.out.println("end");
-                                if(stringArray.size() != 0){
-                                    String currentName = "";
-                                    for (int j2 = 0; j2 < stringArray.size(); j2++) {
-                                        currentName+= stringArray.get(j2);
-                                    }
-                                    varnames.add(currentName);
-                                    stringArray = new ArrayList<>();
-                                }
-                            }//\ab.\bc.\cd
-                        }
-                    }
+                ArrayList<Character> chararray = new ArrayList<>();
+                for (int i = 0; i < namearray.length; i++) {
+                    chararray.add(namearray[i]);
                 }
-                System.out.println("varnames(init): "+varnames);
-                Applications temp3 = new Applications();
-               // System.out.println(TreeBuilder(temp3, varnames));
-            
-                // appArray = new ArrayList<Applications>();
-                // Applications temp2 = new Applications();
-                // appArray.add(temp2);
-
-                // List<Object> enterString = new ArrayList<>();
-                // int spacecounter = 0;
-
-                // String[] varnames = name.split(" ");
-
-                // for (int i = 0; i < varnames.length; i++) {
-                // //System.out.println(i+" "+varnames[i]);
-                // char[] vararray = varnames[i].toCharArray();
-                // //System.out.println(vararray);
-                // int openParenCount = 0;
-                // int closedParenCount = 0;
-
-                // for (int j = 0; j < vararray.length; j++) {
-                // if (vararray[j] == '(')
-                // openParenCount++;
-                // if (vararray[j] == ')')
-                // closedParenCount++;
-                // }
-                // for (int j = 0; j < openParenCount; j++) {
-                // enterString.add('(');
-                // }
-                // String varname = "";
-                // for (int j = openParenCount; j<vararray.length-closedParenCount ; j++) {
-                // varname+=vararray[j];
-                // }
-                // //System.out.println("varname: "+varname);
-                // enterString.add(varname);
-                // for (int j = 0; j < closedParenCount; j++) {
-                // enterString.add(')');
-                // }
-
-                // }
-                // for (int i = 0; i < temp.length; i++) {
-                // enterString.add(temp[i]);
-                // }
-                // System.out.println(enterString);
-                // System.out.println(treeBuilder(enterString));
-                // System.out.println(appArray);
-
+                chararray.add(' ');
+                if (!name.equals("exit")) {
+                    System.out.println(createExpressions(chararray, 0));
+                } else {
+                    System.out.println("Goodbye!");
+                }
+                currApplication = new Applications();
             }
-            if (!name.equals("exit")) {
-                // System.out.println(var.toString());
-                // Expressions expression = new Expressions(var.toString());
-                // System.out.println(expression.toString());
-            } else {
-                System.out.println("Goodbye!");
-            }
-
         }
     }
 
-    public static ArrayList<Applications> appArray = new ArrayList<Applications>();
+    public static ArrayList<Character> temparray = new ArrayList<>();
+    public static ArrayList<Expressions> expressionarray = new ArrayList<>();
+    public static Applications currApplication = new Applications();
 
-    // public static Applications treeBuilder(List<Object> enterString) {
-    // // System.out.println("size: " + enterString.size());
-    // for (int i = 0; i < enterString.size(); i++) {
-    // // System.out.println("i: "+i+" geti: "+ enterString.get(i));
-    // if (enterString.get(i).equals('(')) {
-    // // System.out.println("in");
-    // int parenCount = 0;
-    // boolean foundParen = false;
-    // for (int j = i; j < enterString.size(); j++) {
-    // // System.out.println("j: " + j + " " + enterString.get(j));
-    // if (enterString.get(j).equals('(')) {
-    // parenCount++;
-    // }
-    // if (enterString.get(j).equals(')')) {
-    // parenCount--;
-    // }
-    // if (parenCount == 0 && foundParen == false) {
-    // foundParen = true;
-    // // char[] temp = new char[j-i-1];
-    // // System.arraycopy(c, i+1, temp, 0, j-i-1);
-    // // System.out.println("i: "+i+" j:"+j);
-    // List<Object> temp = enterString.subList(i + 1, j);
-    // // System.out.println("HELOE");
-    // // System.out.println(i + " " + (j));
-    // // System.out.println(enterString);
-    // // // for (int k = 0; k < c.length; k++) {
-    // // if(k >= i && k<=j){
-    // // c[k] = ' ';
-    // // }
-    // // }
-    // // System.out.println();
-    // // System.out.println(temp);
-    // if (appArray.size() == 0) {
-    // Applications temp3 = new Applications();
-    // appArray.add(temp3);
-    // }
-    // if (appArray.get(appArray.size() - 1).left == null) {
-    // System.out.println("left");
-    // Applications temp2 = new Applications();
-    // temp2.left = appArray.get(appArray.size() - 1);
-    // Applications temp3 = new Applications();
-    // appArray.add(temp3);
-    // temp2.left = treeBuilder(temp);
-    // appArray.remove(appArray.size() - 1);
-    // appArray.add(temp2);
-    // // System.out.println("appArray: "+appArray);
-    // } else if (appArray.get(appArray.size() - 1).right != null) {
-    // System.out.println("full");
-    // Applications temp2 = new Applications();
-    // temp2.left = appArray.get(appArray.size() - 1);
-    // Applications temp3 = new Applications();
-    // appArray.add(temp3);
-    // // System.out.println("temp: "+temp);
-    // temp2.right = treeBuilder(temp);
-    // appArray.remove(appArray.size() - 1);
-    // appArray.add(temp2);
-
-    // // System.out.println("appArray: "+appArray);
-    // } else {
-    // System.out.println("right");
-    // Applications temp2 = appArray.get(appArray.size() - 1);
-    // Applications temp3 = new Applications();
-    // appArray.add(temp3);
-    // temp2.right = treeBuilder(temp);
-    // appArray.remove(appArray.size() - 1);
-
-    // // System.out.println("appArray: "+appArray);
-    // }
-    // // System.out.println("change i J: "+j);
-    // // System.out.println(enterString.get(j));
-    // i = j;
-    // }
-
-    // }
-    // } else if (!enterString.get(i).equals(" ") && !enterString.get(i).equals('
-    // ')&&!enterString.get(i).equals("a b ") ) {
-    // int chartoint = 0;
-
-    // // System.out.println("char i:"+i+ " [i]:"+enterString.get(i)+"-");
-    // Variables temp = new Variables((String) enterString.get(i));//
-    // // TODO here to make the name bigger
-    // if (appArray.size() == 0) {
-    // Applications temp2 = new Applications();
-    // temp2.left = temp;
-    // appArray.add(temp2);
-    // } else if (appArray.get(appArray.size() - 1).left == null) {
-    // Applications temp2 = appArray.get(appArray.size() - 1);
-    // temp2.left = temp;
-    // } else if (appArray.get(appArray.size() - 1).right != null) {
-    // Applications temp2 = new Applications();
-    // temp2.left = appArray.get(appArray.size() - 1);
-    // temp2.right = temp;
-    // appArray.add(temp2);
-    // } else {
-    // Applications temp2 = appArray.get(appArray.size() - 1);
-    // temp2.right = temp;
-    // }
-    // // System.out.println(appArray);
-    // }
-    // }
-    // return appArray.get(appArray.size() - 1);
-    // }
-    public static Applications TreeBuilder(Applications app, List<Object> varnames) {
-        System.out.println("varnames: " + varnames);
-        System.out.println("app: " + app);
-        System.out.println("size: " + varnames.size());
-        if (varnames.size() == 0) {
-            System.out.println("return app: " + app);
-            return app;
+    // public static Applications temp = new Applications();
+    public static Applications createExpressions(List<Character> chararray, int index) {
+        System.out.println("app:"+currApplication);
+        if (index >= chararray.size()) {
+            return currApplication;
         } else {
-            if(app == null){
+            if (chararray.get(index) == '(') {
                 Applications temp = new Applications();
-                return TreeBuilder(temp, varnames);
-            }
-            else if (app.left == null && app.right == null) {
-                // app.left = varnames.get(0);
-                if(!varnames.get(0).equals("(")){
-                    app.left = varnames.get(0);
-                    System.out.println("removed2: " + varnames.remove(0));
-                }
-                else{
-                    Applications temp = new Applications();
-                    List<Object> temp2 = stuffinParens(varnames);
-                    System.out.println("temp2: "+ temp2);
-                    int amount_to_remove = (int)temp2.get(temp2.size()-1);
-                    temp2.remove(temp2.size()-1);
-                    System.out.println("before1: "+ varnames);
-                    for (int i = 0; i < amount_to_remove+1; i++) {    
-                        varnames.remove(0);
-                    }
-                    System.out.println("after: "+ varnames);
-                    app.left = TreeBuilder(null,temp2);
-                }
-                //System.out.println("removed2: "+ varnames.remove(0));
-                return TreeBuilder(app, varnames);
-            }
-            else if(app.left != null && app.right != null){
-                Applications temp = new Applications();
-                temp.left = app;
-                return TreeBuilder(temp, varnames);
-            }
-            else if (app.left == null) {
-                // Applications temp = new Applications();
-                // app.left = varnames.get(0);
-                if(!varnames.get(0).equals("(")){
-                    app.left = varnames.get(0);
-                    System.out.println("removed2: " + varnames.remove(0));
-                }
-                else{
-                    Applications temp = new Applications();
-                    List<Object> temp2 = stuffinParens(varnames);
-                    int amount_to_remove = (int)temp2.get(temp2.size()-1);
-                    temp2.remove(temp2.size()-1);
-                    System.out.println("before2: "+ varnames);
-                    for (int i = 0; i < amount_to_remove+1; i++) {    
-                        varnames.remove(0);
-                    }
-                    System.out.println("after: "+ varnames);
-                    app.left = TreeBuilder(null,temp2);
-                }
-                //System.out.println("removed1: " + varnames.remove(0));
-                return TreeBuilder(app, varnames);
+                temp.right = currApplication.right;
+                temp.left = currApplication.left;
+                currApplication.right = null;
+                currApplication.left = null;
+                createExpressions(chararray.subList(index + 1, getClosedParenIndex(chararray, index)), 0);
 
-            } else if (app.right == null) {
-                if(!varnames.get(0).equals("(")){
-                    app.right = varnames.get(0);
-                    System.out.println("removed2: " + varnames.remove(0));
+                Applications temp2 = new Applications();
+                if (temp.left == null && temp.right == null) {
+                    temp2 = currApplication;
+                } else if (temp.left == null) {
+                    temp2.left = temp.right;
+                    temp2.right = checkRightExpress();
+                } else if (temp.right == null) {
+                    temp2.left = temp.left;
+                    temp2.right = checkRightExpress();
+                } else {
+                    temp2.right = checkRightExpress();
+                    temp2.left = temp;
                 }
-                else{
-                    Applications temp = new Applications();
-                    List<Object> temp2 = stuffinParens(varnames);
-                    int amount_to_remove = (int)temp2.get(temp2.size()-1);
-                    temp2.remove(temp2.size()-1);
-                    System.out.println("before3: "+ varnames);
-                    for (int i = 0; i < amount_to_remove+1; i++) {    
-                        varnames.remove(0);
-                    }
-                    
-                    System.out.println("after: "+ varnames);
-                    app.right = TreeBuilder(null,temp2);
+                currApplication = temp2;
+                System.out.println("app:" + currApplication);
+                return createExpressions(chararray, getClosedParenIndex(chararray, index) + 1);
+            } else if (chararray.get(index) == '\\') {
+
+            } else if (chararray.get(index) == ')') {
+
+            } else if (chararray.get(index) != ' ') {
+                int varindex = getFullVarName(chararray, index);
+                if (index == varindex) {
+                    addToTree(listToString(chararray.subList(index, varindex + 1)));
+                } else {
+                    addToTree(listToString(chararray.subList(index, varindex)));
                 }
-                return TreeBuilder(app, varnames);
+                return createExpressions(chararray, varindex + 1);
+            } else {
+                return createExpressions(chararray, index + 1);
             }
         }
         return null;
     }
-    public static List<Object> stuffinParens(List<Object> varnames){
-        int parenCounter = 1;
-        int closedParenIndex = -1;
-        for (int i = 1; i < varnames.size(); i++) {
-           if(varnames.get(i).equals("(")){
-               parenCounter ++;
-           } 
-           if(varnames.get(i).equals(")")){
-            parenCounter --;
-        } 
-            if(parenCounter == 0 && closedParenIndex == -1){
-                closedParenIndex = i;
+
+    public static Object checkRightExpress() {
+        if (currApplication.left == null && currApplication.right == null) {
+            return null;
+        } else if (currApplication.left == null) {
+            return currApplication.right;
+        } else if (currApplication.right == null) {
+            return currApplication.left;
+        } else {
+            return currApplication;
+        }
+    }
+
+    public static String listToString(List<Character> chararray) {
+        String temp = "";
+        for (int i = 0; i < chararray.size(); i++) {
+            temp += chararray.get(i);
+        }
+        return temp;
+    }
+
+    public static void addToTree(Object var) {
+        if (currApplication.left == null) {
+            currApplication.left = var;
+        } else if (currApplication.right == null) {
+            currApplication.right = var;
+        } else {
+            Applications temp = new Applications();
+            temp.left = currApplication;
+            temp.right = var;
+            currApplication = temp;
+        }
+    }
+
+    public static int getClosedParenIndex(List<Character> chararray, int currindex) {
+        int parenCount = 1;
+        for (int i = currindex + 1; i < chararray.size(); i++) {
+            if (chararray.get(i) == '(') {
+                parenCount++;
+            }
+            if (chararray.get(i) == ')') {
+                parenCount--;
+            }
+            if (parenCount == 0) {
+                return i;
             }
         }
-        List<Object> temp = new ArrayList<>();
-        for (int i = 1; i < closedParenIndex; i++) {
-            temp.add(varnames.get(i));
+        return 0;
+    }
+
+    public static String getDotIndex(List<Character> chararray, int currindex) {
+        String temp = "";
+        for (int i = currindex + 1; i < chararray.size(); i++) {
+            if (!(chararray.get(i) == '.')) {
+                return temp;
+            } else {
+                temp += Character.toString(chararray.get(i));
+            }
         }
-        temp.add(closedParenIndex);
-        System.out.println("new temp(paren stuff): " +temp);
         return temp;
+    }
+
+    public static int getFullVarName(List<Character> chararray, int currindex) {
+
+        for (int i = currindex; i < chararray.size(); i++) {
+            if (!(chararray.get(i) == '(' || chararray.get(i) == '\\' || chararray.get(i) == '.'
+                    || chararray.get(i) == ')' || chararray.get(i) == ' ')) {
+
+            } else {
+                return i;
+            }
+        }
+        return chararray.size() - 1;
     }
 }

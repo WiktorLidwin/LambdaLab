@@ -1,71 +1,25 @@
-    import java.util.List;
-    public class Applications{
-
-    String application;
+    public class Applications implements Expressions{
     Object left = null;
     Object right = null;
-    public Applications(String application ){
-        this.application = application.trim();
-        System.out.println("here");
-        System.out.println(this.application);
-        //toTree();
-    }
-    public Applications( ){
-    }
-
-    // public String toTree(){
-    //     char[] applicationArray = this.application.toCharArray();
-    //     int spaceIndex = 0;
-    //     for (int i = 0; i < expressionArray.length; i++) {
-    //         if(expressionArray[i] == ' '){
-    //             spaceIndex = i;
-    //         }
-    //     }
-    //     char[] leftArray = new char[spaceIndex-1];
-    //     char[] rightArray = new char[expressionArray.length - spaceIndex-1];
-    //     System.arraycopy(expressionArray, 1, leftArray, 0, spaceIndex-1);
-    //     System.arraycopy(expressionArray, spaceIndex, rightArray, 0, expressionArray.length - spaceIndex-1);
-    //     //StringBuilder sbf = new StringBuilder();
-
-    //     this.left = leftArray;
-    //     this.right = rightArray;
-    //     System.out.println(leftArray);
-    //     System.out.println(rightArray);
-        
-
-
-    //     return " ";
-    // }
-    public void setLeft(Object left){
+    public void setLeft(Expressions left){
         this.left = left;
     }
-    public void setRight(Object right){
+    public void setRight(Expressions right){
         this.right = right;
     }
     public String toString(){
-        // System.out.println("hello");
-        // if(this.left instanceof List){
-        // System.out.println(this.left);
-        // }
-        // if(this.right instanceof List){
-        // System.out.println(this.right);
-        // }
         if(right == null && left == null){
-            return null;
+            return "(null null)";
         }
         if(right == null){
-            return ( left.toString()  );
+            //return ( left.toString()  );
+            return ("(" + left.toString() + " null)");
         }
         if(left == null){
-            return (right.toString() );
+            //return (right.toString() );
+            return ("(null " + right.toString() + ")");
         }
-        try{
         return ("(" + left.toString() + " " + right.toString() + ")");
-        }
-        catch(Error ex){
-            //System.out.println("error");
-            return null;
-        }
-        //return ("(" + this.left + " " + this.right + ")");
+        
     }
 }
