@@ -1,4 +1,4 @@
-    public class Applications implements Expressions{
+    public class Applications implements Expressions, Cloneable{
     Object left = null;
     Object right = null;
     public void setLeft(Expressions left){
@@ -19,7 +19,16 @@
             //return (right.toString() );
             return ("(null " + right.toString() + ")");
         }
+        try{
         return ("(" + left.toString() + " " + right.toString() + ")");
+        }
+        catch(Error ex){
+            return "error2";
+        }
         
+    }
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }
