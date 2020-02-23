@@ -4,7 +4,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -63,8 +65,18 @@ public class Lambda {
                 }
                 chararray.add(' ');
                 if (!name.equals("exit")) {
+                    run = false;
                     Expressions express = createExpressions(chararray, 0);
-                    if (express != null)
+                    Expressions past = null;
+                    while (express != past) {
+                        past = express;
+                        express = runner(express);
+                    }
+                    if (settingVar != null) {
+                        VariableMap.put(settingVar, express);
+                        System.out.println(("Added " + VariableMap.get(settingVar) + " as " + settingVar));
+                        settingVar = null;
+                    } else if (express != null)
                         System.out.println(express);
                 } else {
                     System.out.println("Goodbye!");
@@ -74,21 +86,250 @@ public class Lambda {
         }
     }
 
+    public static Expressions runner(Expressions express) {// run \n.\f.\x.f (n f x) λf.λx.f x
+        // System.out.println("ruN: "+run);
+        if (express != null && run != true) {
+            return express;
+        } else if (run == true && (express instanceof Variables || express instanceof Function)) {
+            return express;
+        } else {
+            int count = 0;
+            Expressions temp2 = (Applications) express;
+            while (temp2 != null && temp2 instanceof Applications) {
+                count++;
+                temp2 = (Expressions) ((Applications) temp2).left;
+            }
+            if (temp2 instanceof Function) {
+                temp2 = (Applications) express;
+                for (int i = 0; i < count - 1; i++) {
+                    temp2 = (Expressions) ((Applications) temp2).left;
+                }
+                Expressions temp3 = runExpressions(temp2);
+                count--;
+                while (count != 0) {
+                    temp2 = (Applications) express;
+                    for (int i = 0; i < count - 1; i++) {
+                        temp2 = (Expressions) ((Applications) temp2).left;
+                    }
+                    temp2 = (Expressions) ((Applications) temp2).right;
+                    Applications app = new Applications();
+                    app.left = temp3;
+                    app.right = temp2;
+                    temp3 = runExpressions(app);
+                    count--;
+                }
+                return temp3;
+            } else {
+                return express;
+            }
+
+        }
+    }
+
+    // FAIL CASES:
+    // ((λn.((n (λp.((p (λf.(λx.x))) (λx.(λy.x))))) (λx.(λy.x)))) (λf.(λx.(f (f (f
+    // (f (f x))))))))
+
+    // ((lambda n.((n (lambda p.((p (lambda f.(lambda x.x))) (lambda x.(lambda
+    // y.x))))) (lambda x.(lambda y.x)))) (lambda f.(lambda x.(f (f (f (f (f
+    // x))))))))
     public static Dictionary VariableMap = new Hashtable();
+    public static Dictionary ReplaceVarMap = new Hashtable();
     public static ArrayList<Character> temparray = new ArrayList<>();
     public static ArrayList<Expressions> expressionarray = new ArrayList<>();
     public static Applications currApplication = new Applications();
     public static Function currFunction = new Function();
     public static Object key = null;
+    public static boolean run = false;
+    public static ArrayList<String> varArray = new ArrayList<>();
+    public static String settingVar = null;
+    static Expressions test = new Expressions() {
+    };
+
+    public static Expressions runExpressions(Expressions express) {
+        express = alphaReduction(express);
+        express = betaReduction(express);
+        return express;
+    }
+
+    public static Expressions alphaReduction(Expressions express) {
+        varArray = new ArrayList<>();
+        ReplaceVarMap = new Hashtable();
+        findVarNames((Expressions) ((Applications) express).right);
+        replaceNames((Expressions) ((Applications) express).left);
+        return express;
+    }
+
+    public static Expressions betaReduction(Expressions express) {
+        Expressions temp2 = new Expressions() {
+        };
+        temp2 = express;
+        if (express instanceof Function) {
+            express = keepReplacingExpress(express, ((Expressions) ((Function) express).expression), express);
+            if (temp2 != express) {
+                // System.out.println("call");
+                express = betaReduction(express);
+            }
+        } else if (express instanceof Applications) {
+            express = alphaReduction(express);
+            if (((Applications) express).left instanceof Function) {
+                Expressions sub = (Expressions) ((Applications) express).right;
+                Variables var = ((Function) ((Applications) express).left).var;
+                express = replaceExpressions((Expressions) ((Applications) express).left,
+                        ((Function) (Expressions) ((Applications) express).left).expression, sub, var, express);
+                express = betaReduction(express);
+            } else {
+                if (((Applications) express).left instanceof Variables) {
+                } else {
+                    Expressions temp = new Expressions() {
+                    };
+                    temp = betaReduction((Expressions) ((Applications) express).left);
+                    express = keepReplacingExpress(express, temp, express);
+                }
+            }
+        } else {
+            System.out.println("bruh: " + express);
+        }
+        changed = true;
+        while (changed == true) {
+            changed = false;
+            //System.out.println(express);
+            Expressions temp = new Expressions() {
+            };
+            if (express instanceof Function) {
+                temp = ((Function) express).expression;
+                express = keepReplacingExpress(express, temp, express);
+            } else if (express instanceof Applications) {
+                temp = (Expressions) ((Applications) express).left;
+                express = keepReplacingExpress(express, temp, express);
+                temp = (Expressions) ((Applications) express).right;
+                express = keepReplacingExpress(express, temp, express);
+            }
+        }
+        return express;
+    }
+    //TEST - 2 1
+    public static boolean changed = false;
+
+    public static Expressions keepReplacingExpress(Expressions parent, Expressions root, Expressions express) {
+        if (root instanceof Applications) {
+            if (((Applications) root).left instanceof Function) {
+                
+
+                Expressions temp3 = replaceExpressions((Expressions) ((Applications) root).left,
+                        ((Function) (Expressions) ((Applications) root).left).expression,
+                        (Expressions) ((Applications) root).right, ((Function) ((Applications) root).left).var, root);
+                if (parent instanceof Applications) {
+                    if (((Applications) parent).left == root) {
+                        ((Applications) parent).left = temp3;
+                    } else if (((Applications) parent).right == root) {
+                        ((Applications) parent).right = temp3;
+                    }
+                } else if (parent instanceof Function) {
+                    ((Function) parent).expression = temp3;
+                }
+            } else {
+                keepReplacingExpress(root, (Expressions) ((Applications) root).left, express);
+                keepReplacingExpress(root, (Expressions) ((Applications) root).right, express);
+            }
+        } else if (root instanceof Function) {
+           keepReplacingExpress(root, (Expressions) ((Function) root).expression, express);
+        }
+        return express;
+    }
+
+    public static Expressions replaceExpressions(Expressions parent, Expressions root, Expressions sub, Variables var,
+            Expressions express) {
+        if (root instanceof Applications) {
+            replaceExpressions(root, (Expressions) ((Applications) root).left, sub, var, express);
+            replaceExpressions(root, (Expressions) ((Applications) root).right, sub, var, express);
+        } else if (root instanceof Variables) {
+            if (((Variables) root).name.equals(var.name)) {
+                changed = true;
+                if (parent instanceof Applications && (Expressions) ((Applications) parent).left instanceof Variables
+                        && ((Variables) (Expressions) ((Applications) parent).left).name.equals(var.name)) {
+                    ((Applications) parent).left = deepCopy(sub);
+                } else if (parent instanceof Applications
+                        && (Expressions) ((Applications) parent).right instanceof Variables
+                        && ((Variables) (Expressions) ((Applications) parent).right).name.equals(var.name)) {
+                    ((Applications) parent).right = sub;
+                } else if (parent instanceof Function) {
+                    ((Function) parent).expression = sub;
+                }
+            }
+        } else {
+            if (!(((Function) root).var.name.equals(var.name)))
+                replaceExpressions(root, (Expressions) ((Function) root).expression, sub, var, express);
+        }
+        return ((Function) (Expressions) ((Applications) express).left).expression;
+    }
+
+    public static void replaceNames(Expressions root) {
+        if (root instanceof Applications) {
+            replaceNames((Expressions) ((Applications) root).left);
+            replaceNames((Expressions) ((Applications) root).right);
+        } else if (root instanceof Variables) {
+            if ((varArray.contains(((Variables) root).name))) {
+                Enumeration enm = ReplaceVarMap.keys();
+                List<String> ll = Collections.list(enm);
+                if (ll.contains(((Variables) root).name)) {
+                    ((Variables) root).name = (String) ReplaceVarMap.get(((Variables) root).name);
+                } else {
+                    // System.out.println("in1");
+                    int count = 1;
+                    String newName = (((Variables) root).name) + count;
+                    while ((varArray.contains(newName))) {
+                        count++;
+                        newName = (((Variables) root).name) + count;
+                    }
+                    ReplaceVarMap.put(((Variables) root).name, newName);
+                    ((Variables) root).name = newName;
+
+                }
+            }
+        } else {
+            if ((varArray.contains(((Function) root).var.name))) {
+                Enumeration enm = ReplaceVarMap.keys();
+                List<String> ll = Collections.list(enm);
+                if (ll.contains(((Function) root).var.name)) {
+                    ((Function) root).var.name = (String) ReplaceVarMap.get(((Function) root).var.name);
+                } else {
+                    int count = 1;
+                    String newName = (((Function) root).var.name) + count;
+                    while ((varArray.contains(newName))) {
+                        count++;
+                        newName = (((Function) root).var.name) + count;
+                    }
+                    ReplaceVarMap.put(((Function) root).var.name, newName);
+                    ((Function) root).var.name = newName;
+                }
+            }
+            replaceNames((Expressions) ((Function) root).expression);
+        }
+    }
+
+    static void findVarNames(Expressions root) {
+        if (root instanceof Applications) {
+            findVarNames((Expressions) ((Applications) root).left);
+            findVarNames((Expressions) ((Applications) root).right);
+        } else if (root instanceof Variables) {
+            if (!(varArray.contains(((Variables) root).name))) {
+                varArray.add(((Variables) root).name);
+            }
+        } else {
+            if (!(varArray.contains(((Function) root).var.name))) {
+                varArray.add(((Function) root).var.name);
+            }
+            findVarNames((Expressions) ((Function) root).expression);
+        }
+    }
 
     public static Expressions createExpressions(List<Character> chararray, int index) {
         if (index >= chararray.size()) {
             if (currApplication.right == null && currApplication.left instanceof String) {
-                // System.out.println("is a streing");
                 Variables temp = new Variables((String) currApplication.left);
                 return temp;
             } else if (currApplication.right == null) {
-                // System.out.println("is a function");
                 return (Expressions) currApplication.left;
             }
             return currApplication;
@@ -142,7 +383,6 @@ public class Lambda {
                 Function temp = new Function();
                 currFunction = temp;
                 if (index == varindex) {
-                    System.out.println("same in and varin:" + Character.toString(chararray.get(varindex)) + ".");
                     temp.setVar(Character.toString(chararray.get(varindex)));
                 } else {
                     String varname = "";
@@ -186,8 +426,10 @@ public class Lambda {
                 var = key;
                 if (VariableMap.get(var) == null) {
                     currApplication = new Applications();
-                    VariableMap.put(var, createExpressions(chararray, index + 1));
-                    System.out.println(("Added " + VariableMap.get(var) + " as " + var));
+                    // VariableMap.put(var, ;
+                    settingVar = (String) var;
+
+                    return createExpressions(chararray, index + 1);
                 } else {
                     System.out.println(var + " is already defined.");
                 }
@@ -197,23 +439,29 @@ public class Lambda {
                 if (index == varindex) {
                     String name = listToString(chararray.subList(index, varindex + 1));
                     if (name.equals("run")) {
+                        run = true;
                     } else {
                         key = name;
                         if (VariableMap.get(name) != null) {
-                            addToTree(VariableMap.get(name));
-                        } else
-                            addToTree(name);
+                            addToTree(deepCopy((Expressions) VariableMap.get(name)));
+                        } else {
+                            Variables temp = new Variables(name);
+                            addToTree(temp);
+                        }
                     }
                 } else {
                     String name = listToString(chararray.subList(index, varindex));
-                  
+
                     if (name.equals("run")) {
-                    } else {  
+                        run = true;
+                    } else {
                         key = name;
                         if (VariableMap.get(name) != null) {
-                            addToTree(VariableMap.get(name));
-                        } else
-                            addToTree(name);
+                            addToTree(deepCopy((Expressions) VariableMap.get(name)));
+                        } else {
+                            Variables temp = new Variables(name);
+                            addToTree(temp);
+                        }
                     }
                 }
                 return createExpressions(chararray, varindex + 1);
@@ -293,10 +541,30 @@ public class Lambda {
                     || chararray.get(i) == ')' || chararray.get(i) == ' ' || chararray.get(i) == '=')) {
 
             } else {
-                // System.out.println("geti: "+ chararray.get(i-1));
                 return i;
             }
         }
         return chararray.size();
+    }
+
+    public static Expressions deepCopy(Expressions express) {
+        Expressions deepCopy = new Expressions() {
+        };
+        if (express instanceof Function) {
+            deepCopy = new Function();
+            ((Function) deepCopy).var.name = ((Function) express).var.name;
+            ((Function) deepCopy).expression = deepCopy(((Function) express).expression);
+            return deepCopy;
+        } else if (express instanceof Applications) {
+            deepCopy = new Applications();
+            ((Applications) deepCopy).left = deepCopy((Expressions) ((Applications) express).left);
+            ((Applications) deepCopy).right = deepCopy((Expressions) ((Applications) express).right);
+            return deepCopy;
+        } else {
+            deepCopy = new Variables();
+            ((Variables) deepCopy).name = ((Variables) express).name;
+            return deepCopy;
+        }
+
     }
 }

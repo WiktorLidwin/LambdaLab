@@ -1,4 +1,4 @@
-    public class Applications implements Expressions, Cloneable{
+    public class Applications implements Expressions{
     Object left = null;
     Object right = null;
     public void setLeft(Expressions left){
@@ -26,9 +26,5 @@
             return "error2";
         }
         
-    }
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
     }
 }

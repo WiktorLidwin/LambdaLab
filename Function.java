@@ -1,4 +1,4 @@
-public class Function implements Expressions, Cloneable{
+public class Function implements Expressions{
     public Variables var = new Variables(null);
     public Expressions expression = null;
     public void setVar(String string){
@@ -17,8 +17,5 @@ public class Function implements Expressions, Cloneable{
             return "Error1";
         }
     }
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
+    
 }
