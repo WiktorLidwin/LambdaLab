@@ -15,7 +15,6 @@ public class Lambda {
     public static void main(String[] args) throws IOException {
         String carrot = ">";
         String name = "";
-        ArrayList<Expressions> applicationArray = null;
         while (!name.equals("exit")) {
             // Enter data using BufferReader
             System.out.print(carrot);
@@ -66,18 +65,59 @@ public class Lambda {
                 chararray.add(' ');
                 if (!name.equals("exit")) {
                     run = false;
+                    populate = false;
+                    varCount = 0;
+                    checkForVar = true;
                     Expressions express = createExpressions(chararray, 0);
                     Expressions past = null;
                     while (express != past) {
                         past = express;
                         express = runner(express);
                     }
-                    if (settingVar != null) {
+                    if (populate) {
+                        System.out.println("Populated numbers " + aInt + " to " + bInt);
+                        Enumeration enm = VariableMap.keys();
+                        List<Expressions> ll = Collections.list(enm);
+                        System.out.println("size " + ll.size());
+                        for (int i = 0; i < ll.size(); i++) {
+                            System.out.println(i + ": " + ll.get(i));
+                        }
+                        enm = VariableMap.elements();
+                        ll = Collections.list(enm);
+                        System.out.println("size2 " + ll.size());
+                        for (int i = 0; i < ll.size(); i++) {
+                            System.out.println(i + "2: " + ll.get(i));
+                        }
+                    } else if (settingVar != null) {
                         VariableMap.put(settingVar, express);
                         System.out.println(("Added " + VariableMap.get(settingVar) + " as " + settingVar));
                         settingVar = null;
-                    } else if (express != null)
-                        System.out.println(express);
+                    } else if (express != null) {
+                        boolean foundVar = false;
+                        if(checkForVar){
+                        // System.out.println(express);//aExpressionArray
+                        Enumeration enm = VariableMap.elements();
+                        List<Expressions> ll = Collections.list(enm);
+                        for (int i = 0; i < ll.size(); i++) {
+                            sameExpression = true;
+                            aExpressionArray = new ArrayList<>();
+                            bExpressionArray = new ArrayList<>();
+                            compareExpressions(express, ll.get(i));
+                            if (sameExpression) {
+                                System.out.println("found");
+                                Enumeration enm2 = VariableMap.keys();
+                                List<String> ll2 = Collections.list(enm2);
+                                System.out.println(ll2.get(i));
+                                foundVar = true;
+                            }
+                        }
+                    }
+                        if (!foundVar)
+                            System.out.println(express);
+                    
+                    } else {
+                        System.out.println("null");
+                    }
                 } else {
                     System.out.println("Goodbye!");
                 }
@@ -171,7 +211,7 @@ public class Lambda {
                 express = betaReduction(express);
             }
         } else if (express instanceof Applications) {
-            express = alphaReduction(express);
+            // express = alphaReduction(express);
             if (((Applications) express).left instanceof Function) {
                 Expressions sub = (Expressions) ((Applications) express).right;
                 Variables var = ((Function) ((Applications) express).left).var;
@@ -193,7 +233,7 @@ public class Lambda {
         changed = true;
         while (changed == true) {
             changed = false;
-            //System.out.println(express);
+            // System.out.println(express);
             Expressions temp = new Expressions() {
             };
             if (express instanceof Function) {
@@ -208,13 +248,13 @@ public class Lambda {
         }
         return express;
     }
-    //TEST - 2 1
+
+    // TEST - 2 1
     public static boolean changed = false;
 
     public static Expressions keepReplacingExpress(Expressions parent, Expressions root, Expressions express) {
         if (root instanceof Applications) {
             if (((Applications) root).left instanceof Function) {
-                
 
                 Expressions temp3 = replaceExpressions((Expressions) ((Applications) root).left,
                         ((Function) (Expressions) ((Applications) root).left).expression,
@@ -233,7 +273,7 @@ public class Lambda {
                 keepReplacingExpress(root, (Expressions) ((Applications) root).right, express);
             }
         } else if (root instanceof Function) {
-           keepReplacingExpress(root, (Expressions) ((Function) root).expression, express);
+            keepReplacingExpress(root, (Expressions) ((Function) root).expression, express);
         }
         return express;
     }
@@ -323,7 +363,7 @@ public class Lambda {
             findVarNames((Expressions) ((Function) root).expression);
         }
     }
-
+    public static boolean checkForVar = true;
     public static Expressions createExpressions(List<Character> chararray, int index) {
         if (index >= chararray.size()) {
             if (currApplication.right == null && currApplication.left instanceof String) {
@@ -428,7 +468,7 @@ public class Lambda {
                     currApplication = new Applications();
                     // VariableMap.put(var, ;
                     settingVar = (String) var;
-
+                    System.out.println("setting Var: " + settingVar);
                     return createExpressions(chararray, index + 1);
                 } else {
                     System.out.println(var + " is already defined.");
@@ -440,9 +480,18 @@ public class Lambda {
                     String name = listToString(chararray.subList(index, varindex + 1));
                     if (name.equals("run")) {
                         run = true;
+                    } else if (name.equals("populate")) {
+                        int z = getFullVarName(chararray, varindex + 1);
+                        populate(listToString(chararray.subList(varindex, z)),
+                                listToString(chararray.subList(z, chararray.size())));
+                        populate = true;
                     } else {
                         key = name;
                         if (VariableMap.get(name) != null) {
+                            if(varindex+1 >= chararray.size() && varCount ==0){
+                                checkForVar = false;
+                            }
+                            varCount++;
                             addToTree(deepCopy((Expressions) VariableMap.get(name)));
                         } else {
                             Variables temp = new Variables(name);
@@ -454,12 +503,22 @@ public class Lambda {
 
                     if (name.equals("run")) {
                         run = true;
+                    } else if (name.equals("populate")) {
+                        int z = getFullVarName(chararray, varindex + 1);
+                        populate(listToString(chararray.subList(varindex, z)),
+                                listToString(chararray.subList(z, chararray.size())));
+                        populate = true;
                     } else {
                         key = name;
                         if (VariableMap.get(name) != null) {
+                            if(varindex+1 >= chararray.size() && varCount ==0){
+                                checkForVar = false;
+                            }
+                            varCount++;
                             addToTree(deepCopy((Expressions) VariableMap.get(name)));
                         } else {
                             Variables temp = new Variables(name);
+                            varCount++;
                             addToTree(temp);
                         }
                     }
@@ -470,6 +529,97 @@ public class Lambda {
             }
         }
         return null;
+    }
+    public static int varCount = 0;
+    public static boolean populate = false;
+    public static int aInt = 0;
+    public static int bInt = 0;
+
+    public static void populate(String a, String b) {
+        aInt = Integer.parseInt(a.trim());
+        bInt = Integer.parseInt(b.trim());
+        System.out.println("a" + aInt);
+        System.out.println("b" + bInt);
+
+        String succString = "succ = \\n.\\f.\\x.f (n f x)";
+        char[] temp = succString.toCharArray();
+        ArrayList<Character> chararray = new ArrayList<>();
+        for (int i = 0; i < temp.length; i++) {
+            if (temp[i] == '(')
+                chararray.add(' ');
+            if (temp[i] == '=')
+                chararray.add(' ');
+
+            if ((int) temp[i] == 0)
+                chararray.add('\\');
+            else
+                chararray.add(temp[i]);
+        }
+        chararray.add(' ');
+        System.out.println(chararray);
+        Expressions express = createExpressions(chararray, 0);
+        Expressions past = null;
+        while (express != past) {
+            past = express;
+            express = runner(express);
+        }
+        VariableMap.put("succ", express);
+        System.out.println(("Added " + VariableMap.get("succ") + " as " + "succ"));
+
+        if (aInt == 0) {
+            String zeroString = "0 = \\f.\\x.x";
+            temp = zeroString.toCharArray();
+            chararray = new ArrayList<>();
+            for (int i = 0; i < temp.length; i++) {
+                if (temp[i] == '(')
+                    chararray.add(' ');
+                if (temp[i] == '=')
+                    chararray.add(' ');
+
+                if ((int) temp[i] == 0)
+                    chararray.add('\\');
+                else
+                    chararray.add(temp[i]);
+            }
+            chararray.add(' ');
+            express = createExpressions(chararray, 0);
+            past = null;
+            while (express != past) {
+                past = express;
+                express = runner(express);
+            }
+            VariableMap.put("0", express);
+            System.out.println(("Added " + VariableMap.get("0") + " as " + "0"));
+            aInt++;
+        }
+        for (int j = aInt; j <= bInt; j++) {
+            String currString = j + " = run succ " + (j - 1);
+            System.out.println("curr " + currString);
+            temp = currString.toCharArray();
+            chararray = new ArrayList<>();
+            for (int i = 0; i < temp.length; i++) {
+                if (temp[i] == '(')
+                    chararray.add(' ');
+                if (temp[i] == '=')
+                    chararray.add(' ');
+
+                if ((int) temp[i] == 0)
+                    chararray.add('\\');
+                else
+                    chararray.add(temp[i]);
+            }
+            chararray.add(' ');
+            express = createExpressions(chararray, 0);
+            past = null;
+            while (express != past) {
+                past = express;
+                express = runner(express);
+            }
+            VariableMap.put(String.valueOf(j), express);
+            System.out.println("testing");
+            System.out.println(("Added " + VariableMap.get(settingVar) + " as " + settingVar));
+        }
+        settingVar= null;
     }
 
     public static Object checkRightExpress() {
@@ -566,5 +716,49 @@ public class Lambda {
             return deepCopy;
         }
 
+    }
+
+    public static boolean sameExpression = false;
+    public static ArrayList<String> aExpressionArray = new ArrayList<>();
+    public static ArrayList<String> bExpressionArray = new ArrayList<>();
+
+    public static void compareExpressions(Expressions a, Expressions b) {
+        if (a instanceof Applications && b instanceof Applications) {
+            compareExpressions((Expressions) ((Applications) a).left, (Expressions) ((Applications) b).left);
+            compareExpressions((Expressions) ((Applications) a).right, (Expressions) ((Applications) b).right);
+        } else if (a instanceof Variables && b instanceof Variables) {
+            if ((aExpressionArray.contains(((Variables) a).name))) {
+                int indexa = 0;
+                for (int i = 0; i < aExpressionArray.size(); i++) {
+                    if (aExpressionArray.get(i).equals(((Variables) a).name)) {
+                        // System.out.println("index: "+i);
+                        indexa = i;
+                    }
+                }
+                int indexb = 0;
+                for (int i = 0; i < bExpressionArray.size(); i++) {
+                    if (bExpressionArray.get(i).equals(((Variables) b).name)) {
+                        // System.out.println("index: "+i);
+                        indexb = i;
+                    }
+                }
+                if (indexa != indexb) {
+                    // System.out.println("false1");
+                    sameExpression = false;
+                }
+            } else {
+                if (!(((Variables) a).name.equals(((Variables) b).name))) {
+                    sameExpression = false;
+                }
+            }
+        } else if (a instanceof Function && b instanceof Function) {
+            aExpressionArray.add(((Function) a).var.name);
+            bExpressionArray.add(((Function) b).var.name);
+
+            compareExpressions((Expressions) ((Function) a).expression, (Expressions) ((Function) b).expression);
+        } else {
+            // System.out.println("false2");
+            sameExpression = false;
+        }
     }
 }
