@@ -23,7 +23,6 @@ public class Lambda {
             // Reading data using readLine
             name = reader.readLine();
 
-
             if (!name.equals("")) {
                 char[] namearray = name.toCharArray();
                 int commentsplit = namearray.length;
@@ -69,62 +68,64 @@ public class Lambda {
                     populate = false;
                     varCount = 0;
                     checkForVar = true;
-                    
+
                     Expressions express = createExpressions(chararray, 0);
                     Expressions past = null;
                     sameExpression = false;
-                    while (!sameExpression){//FIX HERE
+                    while (!sameExpression ) {// FIX HERE    && express != null
                         sameExpression = true;
                         past = deepCopy(express);
                         express = runner(express);
-                        //System.out.println("express");
-                        //System.out.println(past);
-                        //System.out.println(express);
-                        //System.out.println(sameExpression);
-                        
-                        compareExpressions(past,express);
+                        // System.out.println("express");
+                        // System.out.println(past);
+                        // System.out.println(express);
+                        // System.out.println(sameExpression);
+
+                        compareExpressions(past, express);
                     }
-                    if (populate) {
+                    if(express == null){
+
+                    }
+                    else if (populate) {
                         System.out.println("Populated numbers " + aInt + " to " + bInt);
                         // Enumeration enm = VariableMap.keys();
                         // List<Expressions> ll = Collections.list(enm);
                         // System.out.println("size " + ll.size());
                         // for (int i = 0; i < ll.size(); i++) {
-                        //     System.out.println(i + ": " + ll.get(i));
+                        // System.out.println(i + ": " + ll.get(i));
                         // }
                         // enm = VariableMap.elements();
                         // ll = Collections.list(enm);
                         // System.out.println("size2 " + ll.size());
                         // for (int i = 0; i < ll.size(); i++) {
-                        //     System.out.println(i + "2: " + ll.get(i));
+                        // System.out.println(i + "2: " + ll.get(i));
                         // }
-                    } 
-                    else if (settingVar != null && printStatement == true) {
+                    } else if (settingVar != null && printStatement == true) {
                         VariableMap.put(settingVar, express);
                         System.out.println(("Added " + VariableMap.get(settingVar) + " as " + settingVar));
                         settingVar = null;
-                    } else if (express != null  && printStatement == true ) {
+                    } else if (express != null && printStatement == true) {
                         boolean foundVar = false;
-                        if(checkForVar){
-                        // System.out.println(express);//aExpressionArray
-                        Enumeration enm = VariableMap.elements();
-                        List<Expressions> ll = Collections.list(enm);
-                        for (int i = 0; i < ll.size(); i++) {
-                            sameExpression = true;
-                            aExpressionArray = new ArrayList<>();
-                            bExpressionArray = new ArrayList<>();
-                            compareExpressions(express, ll.get(i));
-                            if (sameExpression) {
-                                Enumeration enm2 = VariableMap.keys();
-                                List<String> ll2 = Collections.list(enm2);
-                                System.out.println(ll2.get(i));
-                                foundVar = true;
+                        if (checkForVar) {
+                            // System.out.println(express);//aExpressionArray
+                            Enumeration enm = VariableMap.elements();
+                            List<Expressions> ll = Collections.list(enm);
+                            for (int i = 0; i < ll.size(); i++) {
+                                sameExpression = true;
+                                aExpressionArray = new ArrayList<>();
+                                bExpressionArray = new ArrayList<>();
+                                compareExpressions(express, ll.get(i));
+                                if (sameExpression) {
+                                    Enumeration enm2 = VariableMap.keys();
+                                    List<String> ll2 = Collections.list(enm2);
+                                    System.out.println(ll2.get(i));
+                                    foundVar = true;
+                                }
                             }
                         }
-                    }
                         if (!foundVar && printStatement == true)
                             System.out.println(express);
-                    
+
                     } else {
                         System.out.println("null");
                     }
@@ -184,7 +185,8 @@ public class Lambda {
     // y.x))))) (lambda x.(lambda y.x)))) (lambda f.(lambda x.(f (f (f (f (f
     // x))))))))
 
-    //(λf11.(λx11.(f11 (f11 (f11 (f11 (f11 (f11 (f11 (f11 (f11 (f11 (f11 ((λu.x11) f11))))))))))))))
+    // (λf11.(λx11.(f11 (f11 (f11 (f11 (f11 (f11 (f11 (f11 (f11 (f11 (f11 ((λu.x11)
+    // f11))))))))))))))
     public static Dictionary VariableMap = new Hashtable();
     public static Dictionary ReplaceVarMap = new Hashtable();
     public static ArrayList<Character> temparray = new ArrayList<>();
@@ -199,7 +201,7 @@ public class Lambda {
     };
 
     public static Expressions runExpressions(Expressions express) {
-        if(express instanceof Applications && ((Applications)express).left instanceof Function)
+        if (express instanceof Applications && ((Applications) express).left instanceof Function)
             express = alphaReduction(express);
         express = betaReduction(express);
         return express;
@@ -214,7 +216,7 @@ public class Lambda {
     }
 
     public static Expressions betaReduction(Expressions express) {
-        //System.out.println("call");
+        // System.out.println("call");
         Expressions temp2 = new Expressions() {
         };
         temp2 = express;
@@ -225,8 +227,8 @@ public class Lambda {
                 express = betaReduction(express);
             }
         } else if (express instanceof Applications) {
-            
-            ((Applications) express).right =  betaReduction((Expressions)((Applications) express).right);
+
+            ((Applications) express).right = betaReduction((Expressions) ((Applications) express).right);
             // express = alphaReduction(express);
             if (((Applications) express).left instanceof Function) {
                 Expressions sub = (Expressions) ((Applications) express).right;
@@ -240,12 +242,12 @@ public class Lambda {
                 } else {
                     Expressions temp = new Expressions() {
                     };
-                    temp = betaReduction((Expressions) ((Applications) express).left);//here
+                    temp = betaReduction((Expressions) ((Applications) express).left);// here
                     express = keepReplacingExpress(express, temp, express);
                 }
             }
         } else {
-            //System.out.println("2"+express);
+            // System.out.println("2"+express);
         }
         changed = true;
         while (changed == true) {
@@ -380,8 +382,10 @@ public class Lambda {
             findVarNames((Expressions) ((Function) root).expression);
         }
     }
+
     public static boolean printStatement = true;
     public static boolean checkForVar = true;
+
     public static Expressions createExpressions(List<Character> chararray, int index) {
         if (index >= chararray.size()) {
             if (currApplication.right == null && currApplication.left instanceof String) {
@@ -453,7 +457,8 @@ public class Lambda {
 
                 while (chararray.get(varindex) != '.') {
                     varindex++;
-                }
+                }//(λm.(λn.((n (λn.(λf.(λx.(((n (λg.(λh.(h (g f))))) (λu.x)) (λu.u))))) m)))
+                 //(λm.(λn.((n (λn.(λf.(λx.(((n (λg.(λh.(h (g f))))) (λu.x)) (λu.u)))))) m)))
 
                 Applications temp2 = new Applications();
                 temp2.right = currApplication.right;
@@ -505,10 +510,11 @@ public class Lambda {
                     } else {
                         key = name;
                         if (VariableMap.get(name) != null) {
-                            if(varindex+1 >= chararray.size() && varCount ==0){
+                            if (varindex + 1 >= chararray.size() && varCount == 0) {
                                 checkForVar = false;
                             }
                             varCount++;
+                            
                             addToTree(deepCopy((Expressions) VariableMap.get(name)));
                         } else {
                             Variables temp = new Variables(name);
@@ -528,7 +534,7 @@ public class Lambda {
                     } else {
                         key = name;
                         if (VariableMap.get(name) != null) {
-                            if(varindex+1 >= chararray.size() && varCount ==0){
+                            if (varindex + 1 >= chararray.size() && varCount == 0) {
                                 checkForVar = false;
                             }
                             varCount++;
@@ -547,6 +553,7 @@ public class Lambda {
         }
         return null;
     }
+
     public static int varCount = 0;
     public static boolean populate = false;
     public static int aInt = 0;
@@ -579,9 +586,8 @@ public class Lambda {
         }
         Enumeration enm = VariableMap.keys();
         List<Expressions> ll = Collections.list(enm);
-        if(!(ll.contains("succ")))
+        if (!(ll.contains("succ")))
             VariableMap.put("succ", express);
-        if (aInt == 0) {
             printStatement = false;
             String zeroString = "0 = \\f.\\x.x";
             temp = zeroString.toCharArray();
@@ -604,11 +610,58 @@ public class Lambda {
                 past = express;
                 express = runner(express);
             }
-           enm = VariableMap.keys();
-       ll = Collections.list(enm);
-        if(!(ll.contains("0")))
-            VariableMap.put("0", express);
-            for (int j = aInt+1; j <= bInt; j++) {
+            enm = VariableMap.keys();
+            ll = Collections.list(enm);
+            if (!(ll.contains("0")))
+                VariableMap.put("0", express);
+        if (aInt == 0) {
+            for (int j = aInt + 1; j <= bInt+1; j++) {
+                printStatement = false;
+                String currString = j + " = run succ " + (j - 1);
+
+                temp = currString.toCharArray();
+                chararray = new ArrayList<>();
+                for (int i = 0; i < temp.length; i++) {
+                    if (temp[i] == '(')
+                        chararray.add(' ');
+                    if (temp[i] == '=')
+                        chararray.add(' ');
+
+                    if ((int) temp[i] == 0)
+                        chararray.add('\\');
+                    else
+                        chararray.add(temp[i]);
+                }
+                chararray.add(' ');
+                if (!(ll.contains(String.valueOf(j)))) {
+                    express = createExpressions(chararray, 0);
+                    if (j == bInt) {
+                        //System.out.println(chararray);
+                        //System.out.println(express);
+
+                    }
+                    past = null;
+                    while (express != past) {
+                        past = express;
+                        express = runner(express);
+                    }
+
+                    if (j == bInt) {
+                        //System.out.println("BintE2"+express);
+                    }
+                    enm = VariableMap.keys();
+                    ll = Collections.list(enm);
+
+                    VariableMap.put(String.valueOf(j), express);
+                } else{
+
+                }
+                    //System.out.println("in1" + String.valueOf(j));
+            }
+            settingVar = null;
+            printStatement = true;
+        } else {
+            for (int j = 1; j <= bInt+1; j++) {
                 printStatement = false;
                 String currString = j + " = run succ " + (j - 1);
                 temp = currString.toCharArray();
@@ -618,57 +671,45 @@ public class Lambda {
                         chararray.add(' ');
                     if (temp[i] == '=')
                         chararray.add(' ');
-    
+
                     if ((int) temp[i] == 0)
                         chararray.add('\\');
                     else
                         chararray.add(temp[i]);
                 }
                 chararray.add(' ');
-                express = createExpressions(chararray, 0);
-                past = null;
-                while (express != past) {
-                    past = express;
-                    express = runner(express);
-                }
+
                 enm = VariableMap.keys();
-       ll = Collections.list(enm);
-        if(!(ll.contains(String.valueOf(j))))
-                VariableMap.put(String.valueOf(j), express);
+                ll = Collections.list(enm);
+                if (!(ll.contains(String.valueOf(j)))) {
+                    express = createExpressions(chararray, 0);
+                    if (j == bInt) {
+                        //System.out.println(chararray);
+                        //System.out.println(express);
+                    }
+                    past = null;
+                    while (express != past) {
+                        past = express;
+                        express = runner(express);
+                    }
+                    if (j == bInt) {
+                        //System.out.println("bIntE: "+express);
+                    }
+
+                    VariableMap.put(String.valueOf(j), express);
+                } else {
+                    //System.out.println("in2" + String.valueOf(j));
+                }
             }
-            settingVar= null;
+            // ERROR FOUND:
+            // last number is defined wrong
+            // when something is define and there is a run it breaks
+          
+            settingVar = null;
             printStatement = true;
         }
-        else{
-            for (int j = aInt; j <= bInt; j++) {
-                printStatement = false;
-                String currString = j + " = run succ " + (j - 1);
-                temp = currString.toCharArray();
-                chararray = new ArrayList<>();
-                for (int i = 0; i < temp.length; i++) {
-                    if (temp[i] == '(')
-                        chararray.add(' ');
-                    if (temp[i] == '=')
-                        chararray.add(' ');
-    
-                    if ((int) temp[i] == 0)
-                        chararray.add('\\');
-                    else
-                        chararray.add(temp[i]);
-                }
-                chararray.add(' ');
-                express = createExpressions(chararray, 0);
-                past = null;
-                while (express != past) {
-                    past = express;
-                    express = runner(express);
-                }
-                VariableMap.put(String.valueOf(j), express);
-            }
-            settingVar= null;
-            printStatement = true;
-        }
-        
+     
+
     }
 
     public static Object checkRightExpress() {
